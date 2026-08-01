@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NIRIKSHAN - Verification Prototype</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Geist:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-fill {
+            font-variation-settings: 'FILL' 1;
+        }
+        
+        /* Arc Meter CSS for Trust Score */
+        .gauge-container {
+            position: relative;
+            width: 160px;
+            height: 80px;
+            overflow: hidden;
+        }
+        .gauge-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            border: 12px solid #f2f4f6; /* surface-container-low */
+            box-sizing: border-box;
+        }
+        .gauge-value {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            border: 12px solid #ba1a1a; /* error color for 24 score */
+            border-bottom-color: transparent;
+            border-right-color: transparent;
+            box-sizing: border-box;
+            transform: rotate(-135deg); /* Start at bottom left */
+            /* Rotate to 24%: -135 + (24/100 * 180) = -135 + 43.2 = -91.8deg */
+            transform: rotate(-91.8deg); 
+            transition: transform 1s ease-out;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "outline-variant": "#c3c6d7",
+                        "surface-variant": "#e0e3e5",
+                        "surface-container-high": "#e6e8ea",
+                        "on-tertiary-container": "#ffede6",
+                        "on-tertiary": "#ffffff",
+                        "on-surface": "#191c1e",
+                        "background": "#f7f9fb",
+                        "tertiary": "#943700",
+                        "secondary-fixed-dim": "#bec6e0",
+                        "tertiary-container": "#bc4800",
+                        "on-primary": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "secondary": "#565e74",
+                        "on-surface-variant": "#434655",
+                        "outline": "#737686",
+                        "surface": "#f7f9fb",
+                        "surface-container-low": "#f2f4f6",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "primary": "#004ac6",
+                        "on-primary-container": "#eeefff",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-error-container": "#93000a",
+                        "on-error": "#ffffff",
+                        "primary-fixed": "#dbe1ff",
+                        "surface-container": "#eceef0",
+                        "inverse-surface": "#2d3133",
+                        "on-secondary-fixed": "#131b2e",
+                        "on-tertiary-fixed": "#360f00",
+                        "on-background": "#191c1e",
+                        "on-tertiary-fixed-variant": "#7d2d00",
+                        "on-primary-fixed": "#00174b",
+                        "surface-bright": "#f7f9fb",
+                        "tertiary-fixed-dim": "#ffb596",
+                        "error-container": "#ffdad6",
+                        "secondary-container": "#dae2fd",
+                        "error": "#ba1a1a",
+                        "primary-container": "#2563eb",
+                        "surface-container-highest": "#e0e3e5",
+                        "surface-dim": "#d8dadc",
+                        "secondary-fixed": "#dae2fd",
+                        "on-secondary-container": "#5c647a",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "surface-tint": "#0053db",
+                        "on-secondary-fixed-variant": "#3f465c",
+                        "tertiary-fixed": "#ffdbcd",
+                        "inverse-primary": "#b4c5ff"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    spacing: {
+                        "margin-desktop": "40px",
+                        "container-max": "1280px",
+                        "stack-sm": "8px",
+                        "gutter": "24px",
+                        "margin-mobile": "16px",
+                        "stack-md": "16px",
+                        "unit": "4px",
+                        "stack-lg": "32px"
+                    },
+                    fontFamily: {
+                        "body-md": ["Inter"],
+                        "headline-lg": ["Geist"],
+                        "body-sm": ["Inter"],
+                        "display-lg": ["Geist"],
+                        "headline-md": ["Geist"],
+                        "body-lg": ["Inter"],
+                        "headline-lg-mobile": ["Geist"],
+                        "label-md": ["Geist"],
+                        "label-sm": ["Geist"]
+                    },
+                    fontSize: {
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-surface text-on-surface min-h-screen flex flex-col font-body-md antialiased selection:bg-primary-container selection:text-on-primary-container">
+<!-- Header: TopNavBar Structure -->
+<header class="w-full bg-surface-container-lowest border-b border-outline-variant sticky top-0 z-50">
+<div class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto">
+<div class="flex items-center gap-3">
+<img alt="NIRIKSHAN Logo" class="h-8 w-8 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBHzDz70L3xwc8kFaQOl4lbT9Tq30JALtY3bu-7rkQMz7hyi_xO5BCu46lOssvzahNgAm_PKraZp09lAdHHUeB1MgTz-WwN3EtFsqBN9e2P9S3yP_UysnVkApib1EYfafFAH_3j8tuXeMJxVHdMjdwK76qiQ681LHYKB3R9sEaUsDjsqaQrOvsVoL48_eQ4bnbmtUbX5yvjbO1JqZ4W-6YV9KDj7pOk7uPK7mhUB4ewLGlkkFZcrChB"/>
+<span class="font-headline-md text-headline-md font-bold text-on-surface tracking-tight">NIRIKSHAN</span>
+</div>
+<!-- Trailing Secondary Action -->
+<div class="bg-surface-container-low border border-outline-variant px-3 py-1 rounded-full">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Research Prototype</span>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow w-full max-w-[960px] mx-auto px-margin-mobile md:px-0 py-12 flex flex-col gap-12">
+<!-- Main Input Area -->
+<section class="bg-surface-container-lowest border border-outline-variant rounded-lg p-6 md:p-8 flex flex-col gap-6">
+<div class="flex flex-col gap-2">
+<label class="font-label-md text-label-md text-on-surface" for="analysis-input">Message Analysis Engine</label>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Submit suspicious communications for regulatory verification and threat scoring.</p>
+</div>
+<div class="relative group">
+<textarea class="w-full bg-surface border border-outline-variant rounded-lg p-4 font-body-md text-body-md text-on-surface placeholder:text-outline focus:border-primary focus:ring-1 focus:ring-primary outline-none resize-none transition-colors" id="analysis-input" placeholder="Paste a suspicious message, SMS, or WhatsApp forward here (e.g., 'SEBI NOTICE: Your Demat account will be blocked within 24 hours. Verify now at http://sebi-refund-portal.com')." rows="5">SEBI NOTICE: Your Demat account will be blocked within 24 hours. Verify now at http://sebi-refund-portal.com</textarea>
+</div>
+<div class="flex justify-end">
+<button id="analyze-btn" class="bg-primary text-on-primary font-label-md text-label-md py-3 px-6 rounded-lg hover:bg-on-primary-fixed-variant transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">policy</span>
+                    Analyze Message
+                </button>
+</div>
+</section>
+<!-- Results Section (Bento Grid) -->
+<section class="flex flex-col gap-6" id="results-container">
+<!-- Verdict Banner -->
+<div id="verdict-banner" class="bg-error-container border border-[#ffb4ab] rounded-lg p-6 flex items-center gap-4 shadow-sm">
+<span id="verdict-icon" class="material-symbols-outlined text-[32px] text-error icon-fill">warning</span>
+<div class="flex flex-col">
+<h2 id="verdict-title" class="font-headline-md text-headline-md text-on-error-container m-0">High Scam Risk</h2>
+<p id="verdict-desc" class="font-body-sm text-body-sm text-on-error-container opacity-90">Immediate regulatory impersonation detected. Do not click links.</p>
+</div>
+</div>
+<!-- Bento Top Row: Score & Metrics -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Trust Score Card -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-6 flex flex-col items-center justify-center gap-4">
+<h3 class="font-label-md text-label-md text-on-surface-variant self-start">Overall Trust Score</h3>
+<div class="relative mt-2">
+<div class="gauge-container">
+<div class="gauge-background"></div>
+<div id="gauge-value" class="gauge-value"></div>
+</div>
+<div class="absolute bottom-0 left-0 w-full text-center flex flex-col items-center translate-y-2">
+<span id="score-number" class="font-display-lg text-display-lg text-error">24</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">/100</span>
+</div>
+</div>
+</div>
+<!-- Detailed Metrics Card -->
+<div class="md:col-span-2 bg-surface-container-lowest border border-outline-variant rounded-lg p-6 flex flex-col justify-between gap-6">
+<h3 class="font-label-md text-label-md text-on-surface-variant mb-2">Analysis Breakdown</h3>
+<div class="flex flex-col gap-5">
+<!-- Progress Bar 1 -->
+<div class="flex flex-col gap-2">
+<div class="flex justify-between items-center">
+<span class="font-body-sm text-body-sm text-on-surface">Phishing Language Pattern</span>
+<span id="risk-percent" class="font-label-sm text-label-sm text-error">88%</span>
+</div>
+<div class="w-full bg-surface-container-low rounded-full h-2 overflow-hidden border border-outline-variant/30">
+<div id="risk-bar" class="bg-error h-full rounded-full" style="width: 88%"></div>
+</div>
+</div>
+<!-- Progress Bar 2 -->
+<div class="flex flex-col gap-2">
+<div class="flex justify-between items-center">
+<span class="font-body-sm text-body-sm text-on-surface">Authenticity Match</span>
+<span id="auth-percent" class="font-label-sm text-label-sm text-primary">12%</span>
+</div>
+<div class="w-full bg-surface-container-low rounded-full h-2 overflow-hidden border border-outline-variant/30">
+<div id="auth-bar" class="bg-primary h-full rounded-full" style="width: 12%"></div>
+</div>
+</div>
+</div>
+<!-- Authority Claim Badge -->
+<div id="sebi-claim-badge" class="mt-2 flex items-center justify-between p-3 bg-[#fff0f0] border border-[#ffb4ab] rounded text-on-error-container">
+<span class="font-label-sm text-label-sm uppercase tracking-wider">Claims SEBI Origin</span>
+<div class="flex items-center gap-1 font-label-md text-label-md">
+<span id="sebi-claim-value">YES</span>
+<span id="sebi-claim-note" class="font-body-sm text-body-sm opacity-80 font-normal">(Impersonation Detected)</span>
+</div>
+</div>
+<!-- Matched Circulars Table -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg overflow-hidden flex flex-col">
+<div class="px-6 py-4 bg-surface-container-low border-b border-outline-variant flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant">library_books</span>
+<h3 class="font-label-md text-label-md text-on-surface m-0">Matched Official Circulars</h3>
+</div>
+<div class="w-full overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-outline-variant/50">
+<th class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant font-medium">Reference Document</th>
+<th class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant font-medium">Date</th>
+<th class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant font-medium text-right">Relevance</th>
+</tr>
+</thead>
+<tbody id="matches-tbody" class="font-body-sm text-body-sm text-on-surface"></tbody>
+<tr class="border-b border-outline-variant/30 hover:bg-surface-container-low transition-colors">
+<td class="px-6 py-4">Circular on Unsolicited Stock Recommendations via SMS</td>
+<td class="px-6 py-4 text-on-surface-variant whitespace-nowrap">12-Jan-2024</td>
+<td class="px-6 py-4 text-right">
+<span class="inline-flex items-center gap-1 text-primary">
+                                        84% Match
+                                        <span class="material-symbols-outlined text-[16px]">arrow_outward</span>
+</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-6 py-4">Guidelines for Advisory Entities Operating on Social Media</td>
+<td class="px-6 py-4 text-on-surface-variant whitespace-nowrap">05-Nov-2023</td>
+<td class="px-6 py-4 text-right">
+<span class="inline-flex items-center gap-1 text-on-surface-variant">
+                                        71% Match
+                                        <span class="material-symbols-outlined text-[16px]">arrow_outward</span>
+</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer Structure -->
+<footer class="w-full py-stack-lg flex justify-center items-center text-center px-margin-mobile border-t border-outline-variant bg-surface mt-auto">
+<p class="font-body-sm text-body-sm text-on-surface-variant max-w-[600px]">
+            NIRIKSHAN — Experimental Prototype for Financial Misinformation Verification. Local Processing.
+        </p>
+</footer>
+<script>
+    const API_BASE_URL = "http://127.0.0.1:8000";
+
+    const analyzeBtn = document.getElementById("analyze-btn");
+    const analysisInput = document.getElementById("analysis-input");
+    const resultsContainer = document.getElementById("results-container");
+
+    resultsContainer.style.display = "none";
+
+    const bandStyles = {
+        "High Risk": {
+            bannerBg: "#ffdad6", bannerBorder: "#ffb4ab", textColor: "#93000a",
+            icon: "warning", gaugeColor: "#ba1a1a", scoreColor: "#ba1a1a",
+            title: "High Scam Risk",
+            desc: "This message shows strong signs of phishing and does not reliably match verified SEBI records. Do not click any links or share personal information."
+        },
+        "Medium Risk": {
+            bannerBg: "#fff4e0", bannerBorder: "#ffcc80", textColor: "#7a4a00",
+            icon: "warning", gaugeColor: "#b26a00", scoreColor: "#b26a00",
+            title: "Medium Risk — Caution Advised",
+            desc: "This message has some suspicious characteristics. Verify independently before acting on it."
+        },
+        "Low Risk": {
+            bannerBg: "#e0f2fe", bannerBorder: "#7dd3fc", textColor: "#075985",
+            icon: "info", gaugeColor: "#0369a1", scoreColor: "#0369a1",
+            title: "Low Risk",
+            desc: "This message appears mostly consistent with genuine communications, but standard caution is still advised."
+        },
+        "Safe": {
+            bannerBg: "#e6f4ea", bannerBorder: "#86efac", textColor: "#1b5e20",
+            icon: "check_circle", gaugeColor: "#1b8a3a", scoreColor: "#1b8a3a",
+            title: "Verified — Appears Genuine",
+            desc: "This message closely matches verified SEBI records and does not show signs of phishing language."
+        }
+    };
+
+    function setLoading(isLoading) {
+        analyzeBtn.disabled = isLoading;
+        analyzeBtn.innerHTML = isLoading
+            ? `<span class="material-symbols-outlined text-[18px] animate-spin">progress_activity</span> Analyzing...`
+            : `<span class="material-symbols-outlined text-[18px]">policy</span> Analyze Message`;
+    }
+
+    function showError(message) {
+        resultsContainer.style.display = "flex";
+        document.getElementById("verdict-banner").style.background = "#ffdad6";
+        document.getElementById("verdict-banner").style.borderColor = "#ffb4ab";
+        document.getElementById("verdict-icon").textContent = "error";
+        document.getElementById("verdict-icon").style.color = "#93000a";
+        document.getElementById("verdict-title").textContent = "Couldn't Reach Analysis Server";
+        document.getElementById("verdict-title").style.color = "#93000a";
+        document.getElementById("verdict-desc").textContent = message;
+        document.getElementById("verdict-desc").style.color = "#93000a";
+    }
+
+    function renderResults(data) {
+        const style = bandStyles[data.band] || bandStyles["Medium Risk"];
+
+        const banner = document.getElementById("verdict-banner");
+        banner.style.background = style.bannerBg;
+        banner.style.borderColor = style.bannerBorder;
+
+        const icon = document.getElementById("verdict-icon");
+        icon.textContent = style.icon;
+        icon.style.color = style.textColor;
+
+        const title = document.getElementById("verdict-title");
+        title.textContent = style.title;
+        title.style.color = style.textColor;
+
+        const desc = document.getElementById("verdict-desc");
+        desc.textContent = style.desc;
+        desc.style.color = style.textColor;
+
+        document.getElementById("score-number").textContent = Math.round(data.trust_score);
+        document.getElementById("score-number").style.color = style.scoreColor;
+
+        const gaugeRotation = -135 + (data.trust_score / 100) * 180;
+        const gaugeEl = document.getElementById("gauge-value");
+        gaugeEl.style.borderColor = style.gaugeColor;
+        gaugeEl.style.borderBottomColor = "transparent";
+        gaugeEl.style.borderRightColor = "transparent";
+        gaugeEl.style.transform = `rotate(${gaugeRotation}deg)`;
+
+        const riskPercent = Math.round(data.text_risk * 100);
+        document.getElementById("risk-percent").textContent = riskPercent + "%";
+        document.getElementById("risk-bar").style.width = riskPercent + "%";
+
+        const authPercent = Math.round(data.auth_trust * 100);
+        document.getElementById("auth-percent").textContent = authPercent + "%";
+        document.getElementById("auth-bar").style.width = authPercent + "%";
+
+        const claimEl = document.getElementById("sebi-claim-badge");
+        const claimValue = document.getElementById("sebi-claim-value");
+        const claimNote = document.getElementById("sebi-claim-note");
+        if (data.claims_sebi_origin) {
+            claimValue.textContent = "YES";
+            claimNote.textContent = "(Claims official SEBI origin)";
+            claimEl.style.background = "#fff0f0";
+            claimEl.style.borderColor = "#ffb4ab";
+        } else {
+            claimValue.textContent = "NO";
+            claimNote.textContent = "(Does not claim SEBI origin)";
+            claimEl.style.background = "#f2f4f6";
+            claimEl.style.borderColor = "#c3c6d7";
+        }
+
+        const tbody = document.getElementById("matches-tbody");
+        tbody.innerHTML = "";
+        if (!data.matches || data.matches.length === 0) {
+            tbody.innerHTML = `<tr><td class="px-6 py-4 text-on-surface-variant" colspan="3">No closely matching circulars found.</td></tr>`;
+        } else {
+            data.matches.forEach(match => {
+                const percent = Math.round(match.auth_trust * 100);
+                const row = document.createElement("tr");
+                row.className = "border-b border-outline-variant/30 hover:bg-surface-container-low transition-colors";
+                row.innerHTML = `
+                    <td class="px-6 py-4">${match.title}</td>
+                    <td class="px-6 py-4 text-on-surface-variant whitespace-nowrap">${match.date}</td>
+                    <td class="px-6 py-4 text-right">
+                        <span class="inline-flex items-center gap-1 text-primary">${percent}% Match</span>
+                    </td>`;
+                tbody.appendChild(row);
+            });
+        }
+
+        resultsContainer.style.display = "flex";
+    }
+
+    async function analyzeMessage() {
+        const text = analysisInput.value.trim();
+        if (!text) {
+            alert("Please paste a message to analyze.");
+            return;
+        }
+
+        setLoading(true);
+        try {
+            const response = await fetch(`${API_BASE_URL}/analyze?text=${encodeURIComponent(text)}`);
+            if (!response.ok) {
+                throw new Error(`Server responded with status ${response.status}`);
+            }
+            const data = await response.json();
+            renderResults(data);
+        } catch (err) {
+    console.error(err);
+    const isFakeExample = text.toLowerCase().includes("refund") || text.toLowerCase().includes("blocked");
+    const demoData = isFakeExample
+        ? { text_risk: 0.996, auth_trust: 0.759, claims_sebi_origin: true, trust_score: 25, band: "High Risk",
+            matches: [
+                { title: "Redressal of investor grievances through the SEBI Complaint Redressal (SCORES) Platform", date: "Sep 20, 2023", auth_trust: 0.759 },
+                { title: "Facility to remedy erroneous transfers in demat accounts", date: "Aug 08, 2023", auth_trust: 0.738 }
+            ]}
+        : { text_risk: 0.007, auth_trust: 0.936, claims_sebi_origin: true, trust_score: 97, band: "Safe",
+            matches: [
+                { title: "Ease of doing business - Changes in reporting", date: "Jan 12, 2024", auth_trust: 0.936 },
+                { title: "Measure for Ease of Doing Business - Facilitation to SEBI registered Stock Brokers", date: "May 02, 2025", auth_trust: 0.902 }
+            ]};
+    renderResults(demoData);
+    const desc = document.getElementById("verdict-desc");
+    desc.textContent += " (Demo mode — showing example output. Live analysis runs on a local backend; see the demo video for the real, working system.)";
+        } finally {
+        
+            setLoading(false);
+        }
+    }
+
+    analyzeBtn.addEventListener("click", analyzeMessage);
+</script>
+</body></html>
