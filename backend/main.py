@@ -6,7 +6,12 @@ from transformers import AutoModelForSequenceClassification, AutoTokenizer
 from sklearn.preprocessing import LabelEncoder
 import torch
 
-MODEL_PATH = "models/detection/mbert_final"
+from fastapi.middleware.cors import CORSMiddleware
+
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH = os.path.join(BASE_DIR, "..", "models", "detection", "mbert_final")
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 text_model = AutoModelForSequenceClassification.from_pretrained(MODEL_PATH).to(device)
@@ -26,11 +31,18 @@ def get_text_risk(text: str) -> float:
 
 app = FastAPI(title="NIRIKSHAN Authentication API")
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 EMBEDDING_MODEL = "all-MiniLM-L6-v2"
-CHROMA_DIR = "data/processed/chroma_db"
+CHROMA_DIR = os.path.join(BASE_DIR, "..", "data", "processed", "chroma_db")
 
 chroma_client = chromadb.PersistentClient(path=CHROMA_DIR)
-collection = chroma_client.get_or_create_collection("sebi_circulars")
+collection = chroma_client.get_collection("sebi_circulars")
 
 SEBI_CIRCULAR_PATTERN = re.compile(r"[A-Z]{2,10}/[A-Z0-9]{2,15}/\d{4}[-/]\d{1,4}", re.IGNORECASE)
 SEBI_KEYWORD_PATTERN = re.compile(r"\bSEBI\b|\bSecurities and Exchange Board of India\b", re.IGNORECASE)
