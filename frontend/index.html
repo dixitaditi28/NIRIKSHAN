@@ -169,6 +169,11 @@
 <label class="font-label-md text-label-md text-on-surface" for="analysis-input">Message Analysis Engine</label>
 <p class="font-body-sm text-body-sm text-on-surface-variant">Submit suspicious communications for regulatory verification and threat scoring.</p>
 </div>
+<div class="flex flex-wrap gap-2">
+<button id="example-fake" class="text-label-sm font-label-sm px-3 py-1.5 rounded-full border border-outline-variant text-on-surface-variant hover:bg-surface-container-low transition-colors">Try a fake SEBI circular</button>
+<button id="example-real" class="text-label-sm font-label-sm px-3 py-1.5 rounded-full border border-outline-variant text-on-surface-variant hover:bg-surface-container-low transition-colors">Try a genuine SEBI notice</button>
+<button id="example-whatsapp" class="text-label-sm font-label-sm px-3 py-1.5 rounded-full border border-outline-variant text-on-surface-variant hover:bg-surface-container-low transition-colors">Try a WhatsApp scam</button>
+</div>
 <div class="relative group">
 <textarea class="w-full bg-surface border border-outline-variant rounded-lg p-4 font-body-md text-body-md text-on-surface placeholder:text-outline focus:border-primary focus:ring-1 focus:ring-primary outline-none resize-none transition-colors" id="analysis-input" placeholder="Paste a suspicious message, SMS, or WhatsApp forward here (e.g., 'SEBI NOTICE: Your Demat account will be blocked within 24 hours. Verify now at http://sebi-refund-portal.com')." rows="5">SEBI NOTICE: Your Demat account will be blocked within 24 hours. Verify now at http://sebi-refund-portal.com</textarea>
 </div>
@@ -444,5 +449,17 @@
     }
 
     analyzeBtn.addEventListener("click", analyzeMessage);
+    const exampleTexts = {
+    "example-fake": "SEBI Circular No. SEBI/MIRSD/2026/4521 - You have an unclaimed refund, click here and enter your net banking password to claim",
+    "example-real": "SEBI has decided to revise the framework for Ease of Doing Investment and Ease of Doing Business",
+    "example-whatsapp": "Congratulations! You have won a special lottery bonus of 5 lakh rupees, click here to claim your prize immediately"
+};
+
+Object.keys(exampleTexts).forEach(btnId => {
+    document.getElementById(btnId).addEventListener("click", () => {
+        analysisInput.value = exampleTexts[btnId];
+        analyzeMessage();
+    });
+});
 </script>
 </body></html>
