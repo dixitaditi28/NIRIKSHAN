@@ -189,6 +189,13 @@
 <p id="verdict-desc" class="font-body-sm text-body-sm text-on-error-container opacity-90">Immediate regulatory impersonation detected. Do not click links.</p>
 </div>
 </div>
+<div id="helpline-notice" class="bg-surface-container-lowest border border-outline-variant rounded-lg p-4 flex items-center justify-between gap-4" style="display: none;">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px] text-on-surface-variant">support_agent</span>
+<span class="font-body-sm text-body-sm text-on-surface">If you've been targeted by this, report it: SEBI Investor Helpline <strong>1800 266 7575</strong></span>
+</div>
+<a href="https://scores.sebi.gov.in" target="_blank" rel="noopener noreferrer" class="font-label-sm text-label-sm text-primary hover:underline whitespace-nowrap">File a complaint on SCORES →</a>
+</div>
 <!-- Bento Top Row: Score & Metrics -->
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 <!-- Trust Score Card -->
@@ -251,30 +258,8 @@
 <th class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant font-medium">Reference Document</th>
 <th class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant font-medium">Date</th>
 <th class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant font-medium text-right">Relevance</th>
-</tr>
 </thead>
 <tbody id="matches-tbody" class="font-body-sm text-body-sm text-on-surface"></tbody>
-<tr class="border-b border-outline-variant/30 hover:bg-surface-container-low transition-colors">
-<td class="px-6 py-4">Circular on Unsolicited Stock Recommendations via SMS</td>
-<td class="px-6 py-4 text-on-surface-variant whitespace-nowrap">12-Jan-2024</td>
-<td class="px-6 py-4 text-right">
-<span class="inline-flex items-center gap-1 text-primary">
-                                        84% Match
-                                        <span class="material-symbols-outlined text-[16px]">arrow_outward</span>
-</span>
-</td>
-</tr>
-<tr class="hover:bg-surface-container-low transition-colors">
-<td class="px-6 py-4">Guidelines for Advisory Entities Operating on Social Media</td>
-<td class="px-6 py-4 text-on-surface-variant whitespace-nowrap">05-Nov-2023</td>
-<td class="px-6 py-4 text-right">
-<span class="inline-flex items-center gap-1 text-on-surface-variant">
-                                        71% Match
-                                        <span class="material-symbols-outlined text-[16px]">arrow_outward</span>
-</span>
-</td>
-</tr>
-</tbody>
 </table>
 </div>
 </div>
@@ -343,6 +328,8 @@
 
     function renderResults(data) {
         const style = bandStyles[data.band] || bandStyles["Medium Risk"];
+        const helplineNotice = document.getElementById("helpline-notice");
+        helplineNotice.style.display = (data.band === "High Risk") ? "flex" : "none";
 
         const banner = document.getElementById("verdict-banner");
         banner.style.background = style.bannerBg;
@@ -399,17 +386,20 @@
             tbody.innerHTML = `<tr><td class="px-6 py-4 text-on-surface-variant" colspan="3">No closely matching circulars found.</td></tr>`;
         } else {
             data.matches.forEach(match => {
-                const percent = Math.round(match.auth_trust * 100);
-                const row = document.createElement("tr");
-                row.className = "border-b border-outline-variant/30 hover:bg-surface-container-low transition-colors";
-                row.innerHTML = `
-                    <td class="px-6 py-4">${match.title}</td>
-                    <td class="px-6 py-4 text-on-surface-variant whitespace-nowrap">${match.date}</td>
-                    <td class="px-6 py-4 text-right">
-                        <span class="inline-flex items-center gap-1 text-primary">${percent}% Match</span>
-                    </td>`;
-                tbody.appendChild(row);
-            });
+    const percent = Math.round(match.auth_trust * 100);
+    const row = document.createElement("tr");
+    row.className = "border-b border-outline-variant/30 hover:bg-surface-container-low transition-colors";
+    const titleCell = match.source_url
+        ? `<a href="${match.source_url}" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">${match.title}</a>`
+        : match.title;
+    row.innerHTML = `
+        <td class="px-6 py-4">${titleCell}</td>
+        <td class="px-6 py-4 text-on-surface-variant whitespace-nowrap">${match.date}</td>
+        <td class="px-6 py-4 text-right">
+            <span class="inline-flex items-center gap-1 text-primary">${percent}% Match</span>
+        </td>`;
+    tbody.appendChild(row);
+});
         }
 
         resultsContainer.style.display = "flex";

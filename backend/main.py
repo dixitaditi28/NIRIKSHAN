@@ -100,7 +100,8 @@ def analyze(text: str):
             "title": meta["title"],
             "date": meta["date"],
             "distance": distance,
-            "auth_trust": distance_to_auth_trust(distance)
+            "auth_trust": distance_to_auth_trust(distance),
+            "source_url": meta.get("source_url", "")
         })
     auth_trust = matches[0]["auth_trust"] if matches else 0.0
 
