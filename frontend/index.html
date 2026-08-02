@@ -177,11 +177,12 @@
 <div class="relative group">
 <textarea class="w-full bg-surface border border-outline-variant rounded-lg p-4 font-body-md text-body-md text-on-surface placeholder:text-outline focus:border-primary focus:ring-1 focus:ring-primary outline-none resize-none transition-colors" id="analysis-input" placeholder="Paste a suspicious message, SMS, or WhatsApp forward here (e.g., 'SEBI NOTICE: Your Demat account will be blocked within 24 hours. Verify now at http://sebi-refund-portal.com')." rows="5">SEBI NOTICE: Your Demat account will be blocked within 24 hours. Verify now at http://sebi-refund-portal.com</textarea>
 </div>
-<div class="flex justify-end">
+<div class="flex flex-col items-end gap-2">
 <button id="analyze-btn" class="bg-primary text-on-primary font-label-md text-label-md py-3 px-6 rounded-lg hover:bg-on-primary-fixed-variant transition-colors flex items-center gap-2">
 <span class="material-symbols-outlined text-[18px]">policy</span>
                     Analyze Message
                 </button>
+<p id="loading-status" class="font-body-sm text-body-sm text-on-surface-variant" style="display: none;"></p>
 </div>
 </section>
 <!-- Results Section (Bento Grid) -->
@@ -200,6 +201,10 @@
 <span class="font-body-sm text-body-sm text-on-surface">If you've been targeted by this, report it: SEBI Investor Helpline <strong>1800 266 7575</strong></span>
 </div>
 <a href="https://scores.sebi.gov.in" target="_blank" rel="noopener noreferrer" class="font-label-sm text-label-sm text-primary hover:underline whitespace-nowrap">File a complaint on SCORES →</a>
+</div>
+<div id="action-guidance" class="bg-surface-container-lowest border border-outline-variant rounded-lg p-6 flex flex-col gap-3" style="display: none;">
+<h3 id="guidance-title" class="font-label-md text-label-md text-on-surface"></h3>
+<ul id="guidance-steps" class="flex flex-col gap-2"></ul>
 </div>
 <!-- Bento Top Row: Score & Metrics -->
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -312,12 +317,32 @@
         }
     };
 
-    function setLoading(isLoading) {
-        analyzeBtn.disabled = isLoading;
-        analyzeBtn.innerHTML = isLoading
-            ? `<span class="material-symbols-outlined text-[18px] animate-spin">progress_activity</span> Analyzing...`
-            : `<span class="material-symbols-outlined text-[18px]">policy</span> Analyze Message`;
+   const loadingSteps = [
+    "Analysing language patterns...",
+    "Checking SEBI circular database...",
+    "Computing Trust Score..."
+];
+let loadingInterval = null;
+
+function setLoading(isLoading) {
+    analyzeBtn.disabled = isLoading;
+    const loadingStatus = document.getElementById("loading-status");
+
+    if (isLoading) {
+        analyzeBtn.innerHTML = `<span class="material-symbols-outlined text-[18px] animate-spin">progress_activity</span> Analyzing...`;
+        loadingStatus.style.display = "block";
+        let stepIndex = 0;
+        loadingStatus.textContent = loadingSteps[stepIndex];
+        loadingInterval = setInterval(() => {
+            stepIndex = (stepIndex + 1) % loadingSteps.length;
+            loadingStatus.textContent = loadingSteps[stepIndex];
+        }, 700);
+    } else {
+        analyzeBtn.innerHTML = `<span class="material-symbols-outlined text-[18px]">policy</span> Analyze Message`;
+        loadingStatus.style.display = "none";
+        clearInterval(loadingInterval);
     }
+}
 
     function showError(message) {
         resultsContainer.style.display = "flex";
@@ -330,11 +355,65 @@
         document.getElementById("verdict-desc").textContent = message;
         document.getElementById("verdict-desc").style.color = "#93000a";
     }
+    function getThreatGuidance(data) {
+    if (data.band === "Safe" || data.band === "Low Risk") {
+        return null;
+    }
+    if (data.text_risk > 0.7 && data.claims_sebi_origin) {
+        return {
+            type: "SEBI Impersonation",
+            steps: [
+                "Do not click any links in this message.",
+                "Do not share your OTP, password, or bank details.",
+                "Block this sender's number or email address.",
+                "Verify any claimed circular directly at sebi.gov.in/legal/circulars."
+            ]
+        };
+    }
+    if (data.text_risk > 0.7) {
+        return {
+            type: "Likely Phishing",
+            steps: [
+                "Do not click any links in this message.",
+                "Do not share any personal or financial information.",
+                "Block this sender's number or email address."
+            ]
+        };
+    }
+    if (data.claims_sebi_origin && data.auth_trust < 0.5) {
+        return {
+            type: "Unverified Circular Claim",
+            steps: [
+                "Verify this claim at sebi.gov.in/legal/circulars before acting.",
+                "Call the SEBI Investor Helpline: 1800 266 7575 to confirm."
+            ]
+        };
+    }
+    return {
+        type: "General Caution",
+        steps: [
+            "Verify independently before acting on this message.",
+            "Avoid sharing personal or financial details until confirmed."
+        ]
+    };
+}
 
     function renderResults(data) {
         const style = bandStyles[data.band] || bandStyles["Medium Risk"];
         const helplineNotice = document.getElementById("helpline-notice");
         helplineNotice.style.display = (data.band === "High Risk") ? "flex" : "none";
+
+        const guidance = getThreatGuidance(data);
+const guidanceContainer = document.getElementById("action-guidance");
+if (guidance) {
+    document.getElementById("guidance-title").textContent = `What to do — ${guidance.type}`;
+    document.getElementById("guidance-steps").innerHTML = guidance.steps
+        .map(step => `<li class="flex items-start gap-2 font-body-sm text-body-sm text-on-surface"><span class="material-symbols-outlined text-[16px] text-on-surface-variant mt-0.5">check</span>${step}</li>`)
+        .join("");
+    guidanceContainer.style.display = "flex";
+} else {
+    guidanceContainer.style.display = "none";
+}
 
         const banner = document.getElementById("verdict-banner");
         banner.style.background = style.bannerBg;
