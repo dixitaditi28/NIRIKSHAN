@@ -147,7 +147,7 @@
         }
     </script>
 </head>
-<body class="bg-surface text-on-surface min-h-screen flex flex-col font-body-md antialiased selection:bg-primary-container selection:text-on-primary-container">
+<body class="bg-surface text-on-surface min-h-screen flex flex-col font-body-md antialiased selection:bg-primary-container selection:text-on-primary-container">    
 <!-- Header: TopNavBar Structure -->
 <header class="w-full bg-surface-container-lowest border-b border-outline-variant sticky top-0 z-50">
 <div class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto">
@@ -156,13 +156,16 @@
 <span class="font-headline-md text-headline-md font-bold text-on-surface tracking-tight">NIRIKSHAN</span>
 </div>
 <!-- Trailing Secondary Action -->
+<div class="flex items-center gap-3">
 <div class="bg-surface-container-low border border-outline-variant px-3 py-1 rounded-full">
 <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Research Prototype</span>
+</div>
+<button id="lang-toggle" class="text-label-sm font-label-sm px-3 py-1.5 rounded-full border border-outline-variant text-on-surface-variant hover:bg-surface-container-low transition-colors">हिंदी</button>
 </div>
 </div>
 </header>
 <!-- Main Content Canvas -->
-<main class="flex-grow w-full max-w-[960px] mx-auto px-margin-mobile md:px-0 py-12 flex flex-col gap-12">
+<main class="flex-grow w-full max-w-[960px] mx-auto px-margin-mobile md:px-0 py-12 flex flex-col gap-12">    
 <!-- Main Input Area -->
 <section class="bg-surface-container-lowest border border-outline-variant rounded-lg p-6 md:p-8 flex flex-col gap-6">
 <div class="flex flex-col gap-2">
@@ -198,9 +201,9 @@
 <div id="helpline-notice" class="bg-surface-container-lowest border border-outline-variant rounded-lg p-4 flex items-center justify-between gap-4" style="display: none;">
 <div class="flex items-center gap-3">
 <span class="material-symbols-outlined text-[20px] text-on-surface-variant">support_agent</span>
-<span class="font-body-sm text-body-sm text-on-surface">If you've been targeted by this, report it: SEBI Investor Helpline <strong>1800 266 7575</strong></span>
+<span class="font-body-sm text-body-sm text-on-surface"><span id="helpline-text">If you've been targeted by this, report it: SEBI Investor Helpline</span> <strong>1800 266 7575</strong></span>
 </div>
-<a href="https://scores.sebi.gov.in" target="_blank" rel="noopener noreferrer" class="font-label-sm text-label-sm text-primary hover:underline whitespace-nowrap">File a complaint on SCORES →</a>
+<a id="scores-link" href="https://scores.sebi.gov.in" target="_blank" rel="noopener noreferrer" class="font-label-sm text-label-sm text-primary hover:underline whitespace-nowrap">File a complaint on SCORES →</a>
 </div>
 <div id="action-guidance" class="bg-surface-container-lowest border border-outline-variant rounded-lg p-6 flex flex-col gap-3" style="display: none;">
 <h3 id="guidance-title" class="font-label-md text-label-md text-on-surface"></h3>
@@ -210,7 +213,7 @@
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 <!-- Trust Score Card -->
 <div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-6 flex flex-col items-center justify-center gap-4">
-<h3 class="font-label-md text-label-md text-on-surface-variant self-start">Overall Trust Score</h3>
+<h3 id="label-trust-score" class="font-label-md text-label-md text-on-surface-variant self-start">Overall Trust Score</h3>
 <div class="relative mt-2">
 <div class="gauge-container">
 <div class="gauge-background"></div>
@@ -224,12 +227,12 @@
 </div>
 <!-- Detailed Metrics Card -->
 <div class="md:col-span-2 bg-surface-container-lowest border border-outline-variant rounded-lg p-6 flex flex-col justify-between gap-6">
-<h3 class="font-label-md text-label-md text-on-surface-variant mb-2">Analysis Breakdown</h3>
+<h3 id="label-breakdown" class="font-label-md text-label-md text-on-surface-variant mb-2">Analysis Breakdown</h3>
 <div class="flex flex-col gap-5">
 <!-- Progress Bar 1 -->
 <div class="flex flex-col gap-2">
 <div class="flex justify-between items-center">
-<span class="font-body-sm text-body-sm text-on-surface">Phishing Language Pattern</span>
+<span id="label-phishing-pattern" class="font-body-sm text-body-sm text-on-surface">Phishing Language Pattern</span>
 <span id="risk-percent" class="font-label-sm text-label-sm text-error">88%</span>
 </div>
 <div class="w-full bg-surface-container-low rounded-full h-2 overflow-hidden border border-outline-variant/30">
@@ -239,7 +242,7 @@
 <!-- Progress Bar 2 -->
 <div class="flex flex-col gap-2">
 <div class="flex justify-between items-center">
-<span class="font-body-sm text-body-sm text-on-surface">Authenticity Match</span>
+<span id="label-auth-match" class="font-body-sm text-body-sm text-on-surface">Authenticity Match</span>
 <span id="auth-percent" class="font-label-sm text-label-sm text-primary">12%</span>
 </div>
 <div class="w-full bg-surface-container-low rounded-full h-2 overflow-hidden border border-outline-variant/30">
@@ -259,21 +262,35 @@
 <div class="bg-surface-container-lowest border border-outline-variant rounded-lg overflow-hidden flex flex-col">
 <div class="px-6 py-4 bg-surface-container-low border-b border-outline-variant flex items-center gap-2">
 <span class="material-symbols-outlined text-[18px] text-on-surface-variant">library_books</span>
-<h3 class="font-label-md text-label-md text-on-surface m-0">Matched Official Circulars</h3>
+<h3 id="label-matched-circulars" class="font-label-md text-label-md text-on-surface m-0">Matched Official Circulars</h3>
 </div>
 <div class="w-full overflow-x-auto">
 <table class="w-full text-left border-collapse">
 <thead>
 <tr class="border-b border-outline-variant/50">
-<th class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant font-medium">Reference Document</th>
-<th class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant font-medium">Date</th>
-<th class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant font-medium text-right">Relevance</th>
+<th id="th-refdoc" class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant font-medium">Reference Document</th>
+<th id="th-date" class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant font-medium">Date</th>
+<th id="th-relevance" class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant font-medium text-right">Relevance</th>
 </thead>
 <tbody id="matches-tbody" class="font-body-sm text-body-sm text-on-surface"></tbody>
 </table>
 </div>
 </div>
 </section>
+</section>
+<section class="bg-surface-container-lowest border border-outline-variant rounded-lg p-6 md:p-8 flex flex-col gap-6">
+<div class="flex flex-col gap-2">
+<label class="font-label-md text-label-md text-on-surface">Audio Verification (Experimental)</label>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Upload a short voice recording or call clip to check whether it shows signs of synthetic/AI-generated speech.</p>
+</div>
+<input type="file" id="audio-file-input" accept="audio/*" class="font-body-sm text-body-sm text-on-surface"/>
+<button id="analyze-audio-btn" class="bg-primary text-on-primary font-label-md text-label-md py-3 px-6 rounded-lg hover:bg-on-primary-fixed-variant transition-colors flex items-center gap-2 self-start">
+<span class="material-symbols-outlined text-[18px]">graphic_eq</span>
+                    Analyze Audio
+                </button>
+<div id="audio-result" style="display: none;" class="mt-2 p-4 rounded-lg border"></div>
+</section>
+</main>
 </main>
 <!-- Footer Structure -->
 <footer class="w-full py-stack-lg flex justify-center items-center text-center px-margin-mobile border-t border-outline-variant bg-surface mt-auto">
@@ -282,6 +299,92 @@
         </p>
 </footer>
 <script>
+    let currentLang = "en";
+
+const translations = {
+    en: {
+        toggleLabel: "हिंदी",
+        heading: "Message Analysis Engine",
+        subheading: "Submit suspicious communications for regulatory verification and threat scoring.",
+        placeholder: "Paste a suspicious message, SMS, or WhatsApp forward here...",
+        analyzeBtn: "Analyze Message",
+        analyzingBtn: "Analyzing...",
+        exampleFake: "Try a fake SEBI circular",
+        exampleReal: "Try a genuine SEBI notice",
+        exampleWhatsapp: "Try a WhatsApp scam",
+        overallScore: "Overall Trust Score",
+        breakdown: "Analysis Breakdown",
+        phishingPattern: "Phishing Language Pattern",
+        authMatch: "Authenticity Match",
+        claimsSebi: "Claims SEBI Origin",
+        yes: "YES",
+        no: "NO",
+        claimsSebiYes: "(Claims official SEBI origin)",
+        claimsSebiNo: "(Does not claim SEBI origin)",
+        matchedCirculars: "Matched Official Circulars",
+        refDoc: "Reference Document",
+        date: "Date",
+        relevance: "Relevance",
+        noMatches: "No closely matching circulars found.",
+        helplineText: "If you've been targeted by this, report it: SEBI Investor Helpline",
+        scoresLink: "File a complaint on SCORES →",
+        whatToDo: "What to do —",
+        loadingSteps: ["Analysing language patterns...", "Checking SEBI circular database...", "Computing Trust Score..."],
+        bands: {
+            "High Risk": { title: "High Scam Risk", desc: "This message shows strong signs of phishing and does not reliably match verified SEBI records. Do not click any links or share personal information." },
+            "Medium Risk": { title: "Medium Risk — Caution Advised", desc: "This message has some suspicious characteristics. Verify independently before acting on it." },
+            "Low Risk": { title: "Low Risk", desc: "This message appears mostly consistent with genuine communications, but standard caution is still advised." },
+            "Safe": { title: "Verified — Appears Genuine", desc: "This message closely matches verified SEBI records and does not show signs of phishing language." }
+        },
+        guidance: {
+            "SEBI Impersonation": { label: "SEBI Impersonation", steps: ["Do not click any links in this message.", "Do not share your OTP, password, or bank details.", "Block this sender's number or email address.", "Verify any claimed circular directly at sebi.gov.in/legal/circulars."] },
+            "Likely Phishing": { label: "Likely Phishing", steps: ["Do not click any links in this message.", "Do not share any personal or financial information.", "Block this sender's number or email address."] },
+            "Unverified Circular Claim": { label: "Unverified Circular Claim", steps: ["Verify this claim at sebi.gov.in/legal/circulars before acting.", "Call the SEBI Investor Helpline: 1800 266 7575 to confirm."] },
+            "General Caution": { label: "General Caution", steps: ["Verify independently before acting on this message.", "Avoid sharing personal or financial details until confirmed."] }
+        }
+    },
+    hi: {
+        toggleLabel: "English",
+        heading: "संदेश विश्लेषण इंजन",
+        subheading: "नियामक सत्यापन और खतरा स्कोरिंग के लिए संदिग्ध संचार सबमिट करें।",
+        placeholder: "यहां एक संदिग्ध संदेश, एसएमएस, या व्हाट्सएप फॉरवर्ड पेस्ट करें...",
+        analyzeBtn: "संदेश विश्लेषण करें",
+        analyzingBtn: "विश्लेषण हो रहा है...",
+        exampleFake: "एक नकली SEBI परिपत्र आज़माएं",
+        exampleReal: "एक असली SEBI सूचना आज़माएं",
+        exampleWhatsapp: "एक व्हाट्सएप घोटाला आज़माएं",
+        overallScore: "कुल ट्रस्ट स्कोर",
+        breakdown: "विश्लेषण विवरण",
+        phishingPattern: "फ़िशिंग भाषा पैटर्न",
+        authMatch: "प्रामाणिकता मिलान",
+        claimsSebi: "SEBI मूल का दावा",
+        yes: "हाँ",
+        no: "नहीं",
+        claimsSebiYes: "(आधिकारिक SEBI मूल का दावा करता है)",
+        claimsSebiNo: "(SEBI मूल का दावा नहीं करता)",
+        matchedCirculars: "मिलान किए गए आधिकारिक परिपत्र",
+        refDoc: "संदर्भ दस्तावेज़",
+        date: "तारीख",
+        relevance: "प्रासंगिकता",
+        noMatches: "कोई निकटता से मिलान करने वाला परिपत्र नहीं मिला।",
+        helplineText: "यदि आप इसके शिकार हुए हैं, तो रिपोर्ट करें: SEBI निवेशक हेल्पलाइन",
+        scoresLink: "SCORES पर शिकायत दर्ज करें →",
+        whatToDo: "क्या करें —",
+        loadingSteps: ["भाषा पैटर्न का विश्लेषण हो रहा है...", "SEBI परिपत्र डेटाबेस की जांच हो रही है...", "ट्रस्ट स्कोर की गणना हो रही है..."],
+        bands: {
+            "High Risk": { title: "उच्च धोखाधड़ी जोखिम", desc: "यह संदेश फ़िशिंग के मजबूत संकेत दिखाता है और सत्यापित SEBI रिकॉर्ड से मेल नहीं खाता। किसी भी लिंक पर क्लिक न करें या व्यक्तिगत जानकारी साझा न करें।" },
+            "Medium Risk": { title: "मध्यम जोखिम — सावधानी बरतें", desc: "इस संदेश में कुछ संदिग्ध विशेषताएं हैं। कार्रवाई करने से पहले स्वतंत्र रूप से सत्यापित करें।" },
+            "Low Risk": { title: "कम जोखिम", desc: "यह संदेश अधिकतर वास्तविक संचार के अनुरूप प्रतीत होता है, फिर भी सामान्य सावधानी बरतने की सलाह दी जाती है।" },
+            "Safe": { title: "सत्यापित — वास्तविक प्रतीत होता है", desc: "यह संदेश सत्यापित SEBI रिकॉर्ड से पूरी तरह मेल खाता है और इसमें फ़िशिंग भाषा के कोई संकेत नहीं हैं।" }
+        },
+        guidance: {
+            "SEBI Impersonation": { label: "SEBI प्रतिरूपण", steps: ["इस संदेश में किसी भी लिंक पर क्लिक न करें।", "अपना OTP, पासवर्ड, या बैंक विवरण साझा न करें।", "इस भेजने वाले का नंबर या ईमेल पता ब्लॉक करें।", "किसी भी दावा किए गए परिपत्र को sebi.gov.in/legal/circulars पर सीधे सत्यापित करें।"] },
+            "Likely Phishing": { label: "संभावित फ़िशिंग", steps: ["इस संदेश में किसी भी लिंक पर क्लिक न करें।", "कोई भी व्यक्तिगत या वित्तीय जानकारी साझा न करें।", "इस भेजने वाले का नंबर या ईमेल पता ब्लॉक करें।"] },
+            "Unverified Circular Claim": { label: "असत्यापित परिपत्र दावा", steps: ["कार्रवाई करने से पहले sebi.gov.in/legal/circulars पर इस दावे को सत्यापित करें।", "पुष्टि के लिए SEBI निवेशक हेल्पलाइन: 1800 266 7575 पर कॉल करें।"] },
+            "General Caution": { label: "सामान्य सावधानी", steps: ["कार्रवाई करने से पहले स्वतंत्र रूप से सत्यापित करें।", "पुष्टि होने तक व्यक्तिगत या वित्तीय विवरण साझा करने से बचें।"] }
+        }
+    }
+};
     const API_BASE_URL = "http://127.0.0.1:8000";
 
     const analyzeBtn = document.getElementById("analyze-btn");
@@ -290,32 +393,13 @@
 
     resultsContainer.style.display = "none";
 
-    const bandStyles = {
-        "High Risk": {
-            bannerBg: "#ffdad6", bannerBorder: "#ffb4ab", textColor: "#93000a",
-            icon: "warning", gaugeColor: "#ba1a1a", scoreColor: "#ba1a1a",
-            title: "High Scam Risk",
-            desc: "This message shows strong signs of phishing and does not reliably match verified SEBI records. Do not click any links or share personal information."
-        },
-        "Medium Risk": {
-            bannerBg: "#fff4e0", bannerBorder: "#ffcc80", textColor: "#7a4a00",
-            icon: "warning", gaugeColor: "#b26a00", scoreColor: "#b26a00",
-            title: "Medium Risk — Caution Advised",
-            desc: "This message has some suspicious characteristics. Verify independently before acting on it."
-        },
-        "Low Risk": {
-            bannerBg: "#e0f2fe", bannerBorder: "#7dd3fc", textColor: "#075985",
-            icon: "info", gaugeColor: "#0369a1", scoreColor: "#0369a1",
-            title: "Low Risk",
-            desc: "This message appears mostly consistent with genuine communications, but standard caution is still advised."
-        },
-        "Safe": {
-            bannerBg: "#e6f4ea", bannerBorder: "#86efac", textColor: "#1b5e20",
-            icon: "check_circle", gaugeColor: "#1b8a3a", scoreColor: "#1b8a3a",
-            title: "Verified — Appears Genuine",
-            desc: "This message closely matches verified SEBI records and does not show signs of phishing language."
-        }
+    const bandVisuals = {
+        "High Risk": { bannerBg: "#ffdad6", bannerBorder: "#ffb4ab", textColor: "#93000a", icon: "warning", gaugeColor: "#ba1a1a", scoreColor: "#ba1a1a" },
+        "Medium Risk": { bannerBg: "#fff4e0", bannerBorder: "#ffcc80", textColor: "#7a4a00", icon: "warning", gaugeColor: "#b26a00", scoreColor: "#b26a00" },
+        "Low Risk": { bannerBg: "#e0f2fe", bannerBorder: "#7dd3fc", textColor: "#075985", icon: "info", gaugeColor: "#0369a1", scoreColor: "#0369a1" },
+        "Safe": { bannerBg: "#e6f4ea", bannerBorder: "#86efac", textColor: "#1b5e20", icon: "check_circle", gaugeColor: "#1b8a3a", scoreColor: "#1b8a3a" }
     };
+   
 
    const loadingSteps = [
     "Analysing language patterns...",
@@ -329,7 +413,7 @@ function setLoading(isLoading) {
     const loadingStatus = document.getElementById("loading-status");
 
     if (isLoading) {
-        analyzeBtn.innerHTML = `<span class="material-symbols-outlined text-[18px] animate-spin">progress_activity</span> Analyzing...`;
+        analyzeBtn.innerHTML = `<span class="material-symbols-outlined text-[18px] animate-spin">progress_activity</span> ${translations[currentLang].analyzingBtn}`;
         loadingStatus.style.display = "block";
         let stepIndex = 0;
         loadingStatus.textContent = loadingSteps[stepIndex];
@@ -338,7 +422,7 @@ function setLoading(isLoading) {
             loadingStatus.textContent = loadingSteps[stepIndex];
         }, 700);
     } else {
-        analyzeBtn.innerHTML = `<span class="material-symbols-outlined text-[18px]">policy</span> Analyze Message`;
+        analyzeBtn.innerHTML = `<span class="material-symbols-outlined text-[18px]">policy</span> ${translations[currentLang].analyzeBtn}`;
         loadingStatus.style.display = "none";
         clearInterval(loadingInterval);
     }
@@ -356,57 +440,34 @@ function setLoading(isLoading) {
         document.getElementById("verdict-desc").style.color = "#93000a";
     }
     function getThreatGuidance(data) {
+    const g = translations[currentLang].guidance;
     if (data.band === "Safe" || data.band === "Low Risk") {
         return null;
     }
     if (data.text_risk > 0.7 && data.claims_sebi_origin) {
-        return {
-            type: "SEBI Impersonation",
-            steps: [
-                "Do not click any links in this message.",
-                "Do not share your OTP, password, or bank details.",
-                "Block this sender's number or email address.",
-                "Verify any claimed circular directly at sebi.gov.in/legal/circulars."
-            ]
-        };
+        return g["SEBI Impersonation"];
     }
     if (data.text_risk > 0.7) {
-        return {
-            type: "Likely Phishing",
-            steps: [
-                "Do not click any links in this message.",
-                "Do not share any personal or financial information.",
-                "Block this sender's number or email address."
-            ]
-        };
+        return g["Likely Phishing"];
     }
     if (data.claims_sebi_origin && data.auth_trust < 0.5) {
-        return {
-            type: "Unverified Circular Claim",
-            steps: [
-                "Verify this claim at sebi.gov.in/legal/circulars before acting.",
-                "Call the SEBI Investor Helpline: 1800 266 7575 to confirm."
-            ]
-        };
+        return g["Unverified Circular Claim"];
     }
-    return {
-        type: "General Caution",
-        steps: [
-            "Verify independently before acting on this message.",
-            "Avoid sharing personal or financial details until confirmed."
-        ]
-    };
+    return g["General Caution"];
 }
+     
 
     function renderResults(data) {
-        const style = bandStyles[data.band] || bandStyles["Medium Risk"];
+        const t = translations[currentLang];
+        const style = bandVisuals[data.band] || bandVisuals["Medium Risk"];
+        const bandText = t.bands[data.band] || t.bands["Medium Risk"];
         const helplineNotice = document.getElementById("helpline-notice");
         helplineNotice.style.display = (data.band === "High Risk") ? "flex" : "none";
 
         const guidance = getThreatGuidance(data);
 const guidanceContainer = document.getElementById("action-guidance");
 if (guidance) {
-    document.getElementById("guidance-title").textContent = `What to do — ${guidance.type}`;
+    document.getElementById("guidance-title").textContent = `${t.whatToDo} ${guidance.label}`;
     document.getElementById("guidance-steps").innerHTML = guidance.steps
         .map(step => `<li class="flex items-start gap-2 font-body-sm text-body-sm text-on-surface"><span class="material-symbols-outlined text-[16px] text-on-surface-variant mt-0.5">check</span>${step}</li>`)
         .join("");
@@ -424,12 +485,13 @@ if (guidance) {
         icon.style.color = style.textColor;
 
         const title = document.getElementById("verdict-title");
-        title.textContent = style.title;
+        title.textContent = bandText.title;
         title.style.color = style.textColor;
 
         const desc = document.getElementById("verdict-desc");
-        desc.textContent = style.desc;
+        desc.textContent = bandText.desc;
         desc.style.color = style.textColor;
+
 
         document.getElementById("score-number").textContent = Math.round(data.trust_score);
         document.getElementById("score-number").style.color = style.scoreColor;
@@ -453,13 +515,13 @@ if (guidance) {
         const claimValue = document.getElementById("sebi-claim-value");
         const claimNote = document.getElementById("sebi-claim-note");
         if (data.claims_sebi_origin) {
-            claimValue.textContent = "YES";
-            claimNote.textContent = "(Claims official SEBI origin)";
+            claimValue.textContent = t.yes;
+            claimNote.textContent = t.claimsSebiYes;
             claimEl.style.background = "#fff0f0";
             claimEl.style.borderColor = "#ffb4ab";
         } else {
-            claimValue.textContent = "NO";
-            claimNote.textContent = "(Does not claim SEBI origin)";
+            claimValue.textContent = t.no;
+            claimNote.textContent = t.claimsSebiNo;
             claimEl.style.background = "#f2f4f6";
             claimEl.style.borderColor = "#c3c6d7";
         }
@@ -467,7 +529,7 @@ if (guidance) {
         const tbody = document.getElementById("matches-tbody");
         tbody.innerHTML = "";
         if (!data.matches || data.matches.length === 0) {
-            tbody.innerHTML = `<tr><td class="px-6 py-4 text-on-surface-variant" colspan="3">No closely matching circulars found.</td></tr>`;
+            tbody.innerHTML = `<tr><td class="px-6 py-4 text-on-surface-variant" colspan="3">${t.noMatches}</td></tr>`;
         } else {
             data.matches.forEach(match => {
     const percent = Math.round(match.auth_trust * 100);
@@ -528,6 +590,50 @@ if (guidance) {
     }
 
     analyzeBtn.addEventListener("click", analyzeMessage);
+    document.getElementById("analyze-audio-btn").addEventListener("click", async () => {
+    const fileInput = document.getElementById("audio-file-input");
+    const resultBox = document.getElementById("audio-result");
+
+    if (!fileInput.files.length) {
+        alert("Please choose an audio file first.");
+        return;
+    }
+
+    resultBox.style.display = "block";
+    resultBox.style.background = "#f2f4f6";
+    resultBox.style.borderColor = "#c3c6d7";
+    resultBox.innerHTML = "Analyzing audio...";
+
+    const formData = new FormData();
+    formData.append("file", fileInput.files[0]);
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/analyze_audio`, {
+            method: "POST",
+            body: formData
+        });
+
+        if (!response.ok) {
+            throw new Error(`Server responded with status ${response.status}`);
+        }
+
+        const data = await response.json();
+        const isFake = data.verdict === "FAKE";
+
+        resultBox.style.background = isFake ? "#ffdad6" : "#e6f4ea";
+        resultBox.style.borderColor = isFake ? "#ffb4ab" : "#86efac";
+        resultBox.innerHTML = `
+            <strong>${isFake ? "⚠️ Likely Synthetic/AI-Generated Voice" : "✅ Likely Genuine Voice"}</strong><br/>
+            Confidence: ${(data.confidence * 100).toFixed(1)}%<br/>
+            <span style="font-size: 13px; opacity: 0.8;">File: ${data.filename}</span>
+        `;
+    } catch (err) {
+        console.error(err);
+        resultBox.style.background = "#ffdad6";
+        resultBox.style.borderColor = "#ffb4ab";
+        resultBox.innerHTML = "Couldn't reach the audio analysis server. Make sure the backend is running locally.";
+    }
+});
     const exampleTexts = {
     "example-fake": "SEBI Circular No. SEBI/MIRSD/2026/4521 - You have an unclaimed refund, click here and enter your net banking password to claim",
     "example-real": "SEBI has decided to revise the framework for Ease of Doing Investment and Ease of Doing Business",
@@ -540,5 +646,38 @@ Object.keys(exampleTexts).forEach(btnId => {
         analyzeMessage();
     });
 });
+
+document.getElementById("lang-toggle").addEventListener("click", () => {
+    currentLang = currentLang === "en" ? "hi" : "en";
+    applyStaticTranslations();
+    if (resultsContainer.style.display !== "none") {
+        analyzeMessage();
+    }
+});
+
+function applyStaticTranslations() {
+    const t = translations[currentLang];
+    document.getElementById("lang-toggle").textContent = t.toggleLabel;
+    document.querySelector('label[for="analysis-input"]').textContent = t.heading;
+    document.querySelector('label[for="analysis-input"]').nextElementSibling.textContent = t.subheading;
+    analysisInput.placeholder = t.placeholder;
+    document.getElementById("example-fake").textContent = t.exampleFake;
+    document.getElementById("example-real").textContent = t.exampleReal;
+    document.getElementById("example-whatsapp").textContent = t.exampleWhatsapp;
+    document.querySelector('#analyze-btn').innerHTML = `<span class="material-symbols-outlined text-[18px]">policy</span> ${t.analyzeBtn}`;
+
+    document.getElementById("label-trust-score").textContent = t.overallScore;
+    document.getElementById("label-breakdown").textContent = t.breakdown;
+    document.getElementById("label-phishing-pattern").textContent = t.phishingPattern;
+    document.getElementById("label-auth-match").textContent = t.authMatch;
+    document.getElementById("label-matched-circulars").textContent = t.matchedCirculars;
+    document.getElementById("th-refdoc").textContent = t.refDoc;
+    document.getElementById("th-date").textContent = t.date;
+    document.getElementById("th-relevance").textContent = t.relevance;
+    document.getElementById("helpline-text").textContent = t.helplineText;
+    document.getElementById("scores-link").textContent = t.scoresLink;
+}
+
+applyStaticTranslations();
 </script>
 </body></html>
