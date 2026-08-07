@@ -680,4 +680,32 @@ function applyStaticTranslations() {
 
 applyStaticTranslations();
 </script>
+<!-- WhatsApp Connect Widget -->
+<div id="wa-widget-container" style="position: fixed; bottom: 24px; right: 24px; z-index: 9999; font-family: inherit;">
+  <div id="wa-popup" style="display: none; width: 300px; background: white; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); margin-bottom: 12px; overflow: hidden; border: 1px solid #e5e7eb;">
+    <div style="background: #075E54; color: white; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center;">
+      <div style="font-weight: 600;">NIRIKSHAN Bot</div>
+      <button onclick="document.getElementById('wa-popup').style.display='none'" style="background: none; border: none; color: white; font-size: 18px; cursor: pointer; line-height: 1;">&times;</button>
+    </div>
+    <div style="padding: 16px;">
+      <p style="margin: 0 0 12px 0; font-size: 14px; color: #374151; line-height: 1.5;">
+        Forward any suspicious SEBI-related message to our WhatsApp bot and get an instant fraud check — in English or Hindi.
+      </p>
+      <p style="margin: 0 0 12px 0; font-size: 12px; color: #9ca3af; line-height: 1.4;">
+        Currently running on a test sandbox for this prototype — tap below to join and try it.
+      </p>
+      <a href="https://wa.me/14155238886?text=join%20your-sandbox-code" target="_blank" rel="noopener"
+         style="display: flex; align-items: center; justify-content: center; gap: 8px; background: #25D366; color: white; padding: 10px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 14px;">
+        Chat on WhatsApp
+      </a>
+    </div>
+  </div>
+
+  <button onclick="var p = document.getElementById('wa-popup'); p.style.display = p.style.display === 'none' ? 'block' : 'none';"
+          style="width: 56px; height: 56px; border-radius: 50%; background: #25D366; border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.2); cursor: pointer; display: flex; align-items: center; justify-content: center;">
+    <svg viewBox="0 0 24 24" width="28" height="28" fill="white">
+      <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.83 12.04 21.83C17.5 21.83 21.95 17.38 21.95 11.92C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.03 14.69 2 12.04 2ZM12.04 20.15C10.56 20.15 9.11 19.76 7.85 19.03L7.55 18.85L4.43 19.68L5.27 16.64L5.08 16.33C4.28 15.02 3.85 13.5 3.85 11.91C3.85 7.39 7.53 3.71 12.05 3.71C14.24 3.71 16.29 4.56 17.84 6.11C19.38 7.66 20.24 9.71 20.24 11.92C20.23 16.44 16.55 20.15 12.04 20.15ZM17.15 14.09C16.9 13.96 15.68 13.36 15.45 13.28C15.22 13.19 15.05 13.15 14.88 13.4C14.71 13.65 14.24 14.2 14.09 14.37C13.94 14.55 13.79 14.57 13.54 14.44C13.29 14.31 12.49 14.05 11.54 13.2C10.81 12.55 10.31 11.74 10.17 11.49C10.03 11.24 10.16 11.11 10.28 10.98C10.39 10.87 10.53 10.69 10.66 10.53C10.79 10.38 10.83 10.27 10.92 10.09C11 9.92 10.96 9.76 10.9 9.63C10.83 9.51 10.34 8.28 10.13 7.79C9.93 7.31 9.73 7.38 9.58 7.37C9.44 7.36 9.27 7.36 9.1 7.36C8.93 7.36 8.65 7.42 8.42 7.67C8.19 7.92 7.55 8.52 7.55 9.75C7.55 10.98 8.44 12.17 8.56 12.34C8.68 12.51 10.32 15.05 12.85 16.11C13.44 16.36 13.91 16.51 14.27 16.62C14.87 16.81 15.42 16.78 15.85 16.72C16.34 16.65 17.35 16.11 17.56 15.52C17.77 14.93 17.77 14.43 17.71 14.32C17.65 14.21 17.4 14.15 17.15 14.09Z"/>
+    </svg>
+  </button>
+</div>
 </body></html>
